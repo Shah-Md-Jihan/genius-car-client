@@ -24,7 +24,7 @@ const CheckOut = () => {
             message
         }
 
-        console.log(order);
+
 
         fetch('http://localhost:5000/orders', {
             method: 'POST',

@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useState } from 'react';
 import app from '../../firebase/firebase.config';
 import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
-import { current } from 'daisyui/src/colors';
+
 
 export const AuthContext = createContext();
 const auth = getAuth(app);
@@ -11,10 +11,12 @@ const AuthProvider = ({ children }) => {
     const [loader, setLoader] = useState(true);
 
     const createUser = (email, password) => {
+        setLoader(true);
         return createUserWithEmailAndPassword(auth, email, password);
     }
 
     const passwordLogin = (email, password) => {
+        setLoader(true);
         return signInWithEmailAndPassword(auth, email, password);
     }
 
@@ -29,6 +31,7 @@ const AuthProvider = ({ children }) => {
         const unsubscribed = onAuthStateChanged(auth, currentUser => {
             console.log(currentUser);
             setUser(currentUser);
+            setLoader(false);
         })
         return () => {
             return unsubscribed;
