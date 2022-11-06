@@ -3,20 +3,32 @@ import { AuthContext } from '../../context/AuthContext/AuthProvider';
 import OrderRow from './OrderRow';
 
 const Order = () => {
-    const { user } = useContext(AuthContext);
+    const { user, logOut } = useContext(AuthContext);
     const [orders, setOrders] = useState([]);
 
     useEffect(() => {
-        fetch(`http://127.0.0.1:5000/orders?email=${user?.email}`)
-            .then(res => res.json())
+        fetch(`http://127.0.0.1:5000/orders?email=${user?.email}`, {
+            headers: {
+                authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then(res => {
+                if (res.status === 403 || res.status === 401) {
+                    logOut();
+                }
+                return res.json();
+            })
             .then(data => setOrders(data))
-    }, [user?.email]);
+    }, [user?.email, logOut]);
 
     const handleDelete = id => {
         const proceed = window.confirm('Are sure to cancle this order?');
         if (proceed) {
             fetch(`http://127.0.0.1:5000/orders/${id}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem('token')}`
+                }
             })
                 .then(res => res.json())
                 .then(data => {
@@ -33,7 +45,8 @@ const Order = () => {
         fetch(`http://127.0.0.1:5000/orders/${id}`, {
             method: 'PATCH',
             headers: {
-                'content-type': 'application/json'
+                'content-type': 'application/json',
+                authorization: `Bearer ${localStorage.getItem('token')}`
             },
             body: JSON.stringify({ status: 'Approved' })
         })
