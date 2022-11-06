@@ -23,7 +23,7 @@ const Login = () => {
                     email: user.email
                 }
 
-                fetch('http://127.0.0.1:5000/jwt', {
+                fetch('https://genius-car-server-gamma-five.vercel.app/jwt', {
                     method: 'POST',
                     headers: {
                         'content-type': 'application/json'
